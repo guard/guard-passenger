@@ -52,8 +52,9 @@ Guard::Passenger accepts some options for configuration.
     # :cli           string             options to pass to passenger command    (default: '--daemonize')
     # :notification  boolean            Notifications enabled                   (default: true)
     # :ping          boolean or string  ping localhost after Passenger restart  (default: false)
+    # :sudo          boolean or string  start Passenger under sudo              (default: false)
 
-    guard 'passenger', :standalone => false, :cli => '--daemonize --port 3001 --address my_app.local --environment production', :ping => '/foo' do
+    guard 'passenger', :standalone => false, :cli => '--daemonize --port 3001 --address my_app.local --environment production', :ping => '/foo', :sudo => 'rvmsudo' do
     end
 
 == Development

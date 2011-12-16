@@ -13,9 +13,9 @@ module Guard
           succeed
         end
 
-        def start_passenger(cli)
+        def start_passenger(cli, sudo = '')
           if passenger_standalone_installed?
-            succeed = system("passenger start #{cli}")
+            succeed = system("#{sudo} passenger start #{cli}".strip)
             if succeed
               UI.info "Passenger standalone started."
             else
@@ -28,8 +28,8 @@ module Guard
           end
         end
 
-        def stop_passenger(cli)
-          succeed = system("passenger stop #{cli}")
+        def stop_passenger(cli, sudo = '')
+          succeed = system("#{sudo} passenger stop #{cli}".strip)
           if succeed
             UI.info "Passenger standalone stopped."
           else

@@ -26,6 +26,12 @@ describe Guard::Passenger::Runner do
         subject.start_passenger('--port 1337 --daemonize').should be_true
       end
 
+      it 'should start passenger under sudo if sudo option set' do
+        subject.should_receive(:system).with('rvmsudo passenger start --port 80 --daemonize').and_return(true)
+        Guard::UI.should_receive(:info).with("Passenger standalone started.")
+        quietly { subject.start_passenger('--port 80 --daemonize', 'rvmsudo').should be_true }
+      end
+
       it 'should fail to start passenger in development environment on the port 1' do
         subject.should_receive(:system).with('passenger start --port 1 --daemonize').and_return(false)
         Guard::UI.should_receive(:error).with("Passenger standalone failed to start!")
@@ -60,7 +66,7 @@ describe Guard::Passenger::Runner do
 
   describe '#stop_passenger' do
     it 'should call "passenger stop --port 3000" by default' do
-      subject.should_receive(:system).with('passenger stop ').and_return(true)
+      subject.should_receive(:system).with('passenger stop').and_return(true)
       subject.stop_passenger('')
     end
 
@@ -69,14 +75,19 @@ describe Guard::Passenger::Runner do
       subject.stop_passenger("--port 3001")
     end
 
+    it 'should call "rvmsudo passenger stop --port 80" if port has been changed and sudo is set' do
+      subject.should_receive(:system).with('rvmsudo passenger stop --port 80').and_return(true)
+      subject.stop_passenger("--port 80", 'rvmsudo')
+    end
+
     it 'should display info message if stop succeeds' do
-      subject.should_receive(:system).with('passenger stop ').and_return(true)
+      subject.should_receive(:system).with('passenger stop').and_return(true)
       Guard::UI.should_receive(:info).with("Passenger standalone stopped.")
       subject.stop_passenger('')
     end
 
     it 'should display error message if stop fails' do
-      subject.should_receive(:system).with('passenger stop ').and_return(false)
+      subject.should_receive(:system).with('passenger stop').and_return(false)
       Guard::UI.should_receive(:error).with("Passenger standalone failed to stop!")
       subject.stop_passenger('')
     end

@@ -75,6 +75,28 @@ describe Guard::Passenger do
         subject.ping.should == 'foo'
       end
     end
+
+    describe 'sudo' do
+      it 'should be blank by default' do
+        subject = Guard::Passenger.new([])
+        subject.sudo.should == ''
+      end
+
+      it 'should be blank if set to false' do
+        subject = Guard::Passenger.new([], { :sudo => false })
+        subject.sudo.should == ''
+      end
+
+      it 'should be "sudo" if set to true' do
+        subject = Guard::Passenger.new([], { :sudo => true })
+        subject.sudo.should == 'sudo'
+      end
+
+      it 'should be "rvmsudo" if set to "rvmsudo"' do
+        subject = Guard::Passenger.new([], { :sudo => 'rvmsudo' })
+        subject.sudo.should == 'rvmsudo'
+      end
+    end
   end
 
   describe 'port' do
@@ -131,19 +153,26 @@ describe Guard::Passenger do
     end
 
     it 'should call `passenger start\' command if standalone is set' do
-      Guard::Passenger::Runner.should_receive(:start_passenger).with('--daemonize').and_return(true)
+      Guard::Passenger::Runner.should_receive(:start_passenger).with('--daemonize', '').and_return(true)
       subject.start
     end
 
     it 'should call `passenger start -p 1337\' command if standalone is set and port is set to 1337' do
       subject.should_receive(:cli_start).and_return('--daemonize --port 1337')
-      Guard::Passenger::Runner.should_receive(:start_passenger).with('--daemonize --port 1337').and_return(true)
+      Guard::Passenger::Runner.should_receive(:start_passenger).with('--daemonize --port 1337', '').and_return(true)
       subject.start
     end
 
     it 'should call `passenger start -p 1337\' command if standalone is set, port is set to 1337 and environment is production' do
       subject.should_receive(:cli_start).and_return('--daemonize --port 1337 --environment production')
-      Guard::Passenger::Runner.should_receive(:start_passenger).with('--daemonize --port 1337 --environment production').and_return(true)
+      Guard::Passenger::Runner.should_receive(:start_passenger).with('--daemonize --port 1337 --environment production', '').and_return(true)
+      subject.start
+    end
+
+    it 'should call `rvmsudo passenger start -p 80` command if sudo is set to "rvmsudo" and port is set to 80' do
+      subject = Guard::Passenger.new([], { :sudo => 'rvmsudo' })
+      subject.should_receive(:cli_start).and_return('--daemonize --port 80')
+      Guard::Passenger::Runner.should_receive(:start_passenger).with('--daemonize --port 80', 'rvmsudo').and_return(true)
       subject.start
     end
   end
@@ -162,13 +191,20 @@ describe Guard::Passenger do
 
     it 'should call `passenger stop\' command if standalone is set and port is 1337' do
       subject.should_receive(:cli_stop).and_return('--port 1337')
-      Guard::Passenger::Runner.should_receive(:stop_passenger).with('--port 1337').and_return(true)
+      Guard::Passenger::Runner.should_receive(:stop_passenger).with('--port 1337', '').and_return(true)
       subject.stop
     end
 
     it 'should call `passenger stop\' command if standalone is set and port is 1337' do
       subject.should_receive(:cli_stop).and_return('--pid-file "/usr/passenger.pid"')
-      Guard::Passenger::Runner.should_receive(:stop_passenger).with('--pid-file "/usr/passenger.pid"').and_return(true)
+      Guard::Passenger::Runner.should_receive(:stop_passenger).with('--pid-file "/usr/passenger.pid"', '').and_return(true)
+      subject.stop
+    end
+
+    it 'should call `rvmsudo passenger stop` command if standalone is set and sudo is set to "rvmsudo"' do
+      subject = Guard::Passenger.new([], { :sudo => 'rvmsudo' })
+      subject.should_receive(:cli_stop).and_return('--pid-file "/usr/passenger.pid"')
+      Guard::Passenger::Runner.should_receive(:stop_passenger).with('--pid-file "/usr/passenger.pid"', 'rvmsudo').and_return(true)
       subject.stop
     end
   end

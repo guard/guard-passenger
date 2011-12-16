@@ -8,7 +8,7 @@ module Guard
     autoload :Runner, 'guard/passenger/runner'
     autoload :Pinger, 'guard/passenger/pinger'
 
-    attr_reader :cli_start, :cli_stop, :ping, :notification
+    attr_reader :cli_start, :cli_stop, :ping, :notification, :sudo
 
     def standalone?
       @standalone
@@ -34,18 +34,21 @@ module Guard
         options[:ping]
       end
       @ping = ping_opt.eql?(true) ? '/' : ping_opt
+
+      @sudo = options[:sudo] || ''
+      @sudo = @sudo.eql?(true) ? 'sudo' : @sudo
     end
 
     # Call once when guard starts
     def start
       UI.info 'Guard::Passenger is running!'
-      standalone? ? Runner.start_passenger(cli_start) : true
+      standalone? ? Runner.start_passenger(cli_start, @sudo) : true
     end
 
     # Call with Ctrl-C signal (when Guard quit)
     def stop
       UI.info 'Stopping Passenger...'
-      Runner.stop_passenger(cli_stop) if standalone?
+      Runner.stop_passenger(cli_stop, @sudo) if standalone?
       true
     end
 
