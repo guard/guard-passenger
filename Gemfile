@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 # Specify your gem's dependencies in guard-passenger.gemspec
 gemspec
 
+gem 'rake'
 require 'rbconfig'
 
 if Config::CONFIG['target_os'] =~ /darwin/i
