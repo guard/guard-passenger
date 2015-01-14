@@ -1,5 +1,6 @@
 require 'guard'
 require 'guard/plugin'
+require "guard/compat/plugin"
 require 'rubygems'
 
 module Guard

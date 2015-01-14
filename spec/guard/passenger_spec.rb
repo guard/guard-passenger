@@ -5,61 +5,61 @@ describe Guard::Passenger do
   describe 'options' do
     describe 'standalone' do
       it 'should be true by default' do
-        subject = Guard::Passenger.new([])
+        subject = Guard::Passenger.new({})
         subject.should be_standalone
       end
 
       it 'should be true if set to true' do
-        subject = Guard::Passenger.new([], { :standalone => true })
+        subject = Guard::Passenger.new({ :standalone => true })
         subject.should be_standalone
       end
 
       it 'should be false if set so' do
-        subject = Guard::Passenger.new([], { :standalone => false })
+        subject = Guard::Passenger.new({ :standalone => false })
         subject.should_not be_standalone
       end
     end
 
     describe 'ping' do
       it 'should be false by default' do
-        subject = Guard::Passenger.new([])
+        subject = Guard::Passenger.new({})
         subject.ping.should be_false
       end
 
       it 'should be false if set so' do
-        subject = Guard::Passenger.new([], { :ping => false })
+        subject = Guard::Passenger.new({ :ping => false })
         subject.ping.should be_false
       end
 
       it 'should be true if set so' do
-        subject = Guard::Passenger.new([], { :ping => true })
+        subject = Guard::Passenger.new({ :ping => true })
         subject.ping.should == '/'
       end
 
       it 'should be true if set to "foo"' do
-        subject = Guard::Passenger.new([], { :ping => 'foo' })
+        subject = Guard::Passenger.new({ :ping => 'foo' })
         subject.ping.should == 'foo'
       end
     end
 
     describe 'sudo' do
       it 'should be blank by default' do
-        subject = Guard::Passenger.new([])
+        subject = Guard::Passenger.new({})
         subject.sudo.should == ''
       end
 
       it 'should be blank if set to false' do
-        subject = Guard::Passenger.new([], { :sudo => false })
+        subject = Guard::Passenger.new({ :sudo => false })
         subject.sudo.should == ''
       end
 
       it 'should be "sudo" if set to true' do
-        subject = Guard::Passenger.new([], { :sudo => true })
+        subject = Guard::Passenger.new({ :sudo => true })
         subject.sudo.should == 'sudo'
       end
 
       it 'should be "rvmsudo" if set to "rvmsudo"' do
-        subject = Guard::Passenger.new([], { :sudo => 'rvmsudo' })
+        subject = Guard::Passenger.new({ :sudo => 'rvmsudo' })
         subject.sudo.should == 'rvmsudo'
       end
     end
@@ -136,7 +136,7 @@ describe Guard::Passenger do
     end
 
     it 'should call `rvmsudo passenger start -p 80` command if sudo is set to "rvmsudo" and port is set to 80' do
-      subject = Guard::Passenger.new([], { :sudo => 'rvmsudo' })
+      subject = Guard::Passenger.new({ :sudo => 'rvmsudo' })
       subject.should_receive(:cli_start).and_return('--daemonize --port 80')
       Guard::Passenger::Runner.should_receive(:start_passenger).with('--daemonize --port 80', 'rvmsudo').and_return(true)
       subject.start
@@ -212,19 +212,19 @@ describe Guard::Passenger do
       end
 
       it 'should ping localhost:3000/ if ping is set to true' do
-        subject = Guard::Passenger.new([], { :ping => true })
+        subject = Guard::Passenger.new({ :ping => true })
         Guard::Passenger::Pinger.should_receive(:ping).with('0.0.0.0', "3000", true, '/')
         subject.send(method)
       end
 
       it 'should ping localhost:3000/ if ping is set to true and notifications are disabled' do
-        subject = Guard::Passenger.new([], { :ping => true, :notification => false })
+        subject = Guard::Passenger.new({ :ping => true, :notification => false })
         Guard::Passenger::Pinger.should_receive(:ping).with('0.0.0.0', "3000", false, '/')
         subject.send(method)
       end
 
       it 'should ping localhost:3000/test if ping is set to true and notifications are disabled' do
-        subject = Guard::Passenger.new([], { :ping => '/test', :notification => false })
+        subject = Guard::Passenger.new({ :ping => '/test', :notification => false })
         Guard::Passenger::Pinger.should_receive(:ping).with('0.0.0.0', "3000", false, '/test')
         subject.send(method)
       end
