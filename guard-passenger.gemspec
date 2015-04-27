@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = 'guard-passenger'
 
   s.add_dependency 'guard', '>= 1.1.0.beta '
+  s.add_dependency 'guard-compat',           '~> 1.1'
 
   s.add_development_dependency 'bundler',       '~> 1.1'
   s.add_development_dependency 'rspec',         '~> 2.11.0'
