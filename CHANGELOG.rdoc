@@ -1,3 +1,8 @@
+== 0.6.0, (Apr 27, 2015)
+
+Fixes:
+  - Update for Guard 2.11. [by guapolo]
+
 == 0.6.0, (Aug 1, 2014)
 
 Features:
