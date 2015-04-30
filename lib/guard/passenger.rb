@@ -41,7 +41,7 @@ module Guard
     def start
       UI.info 'Guard::Passenger is running!'
       if standalone?
-        running = Runner.start_passenger(cli_start, @sudo)
+        @running = Runner.start_passenger(cli_start, @sudo)
       else
         true
       end
