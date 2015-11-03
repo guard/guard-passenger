@@ -1,3 +1,8 @@
+== 0.6.2, (Nov 3, 2015)
+
+Fixes:
+  - Fix to stop standalone passenger on guard stop. [by beverlyguillermo]
+
 == 0.6.0, (Apr 27, 2015)
 
 Fixes:
